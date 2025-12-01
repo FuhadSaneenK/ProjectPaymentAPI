@@ -1,0 +1,18 @@
+<div class="refund-container">
+  <app-page-header
+    title="Refund Approvals"
+    subtitle="Review and approve pending refund requests"
+    icon="fa-sync-alt">
+  </app-page-header>
+
+  <app-data-table
+    sectionTitle="Pending Refunds"
+    sectionSubtitle="All refund requests awaiting approval"
+    [columns]="columns"
+    [data]="pendingRefunds"
+    [actions]="actions"
+    [emptyMessage]="'No pending refund requests'">
+  </app-data-table>
+</div>
+
+

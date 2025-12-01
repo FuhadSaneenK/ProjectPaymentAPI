@@ -1,0 +1,23 @@
+.page-container {
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.content-wrapper {
+  padding: 32px;
+}
+
+// Custom styles for account-specific table cells
+:host ::ng-deep {
+  .account-id {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .balance {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 15px;
+  }
+}

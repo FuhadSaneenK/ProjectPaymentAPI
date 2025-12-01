@@ -1,0 +1,18 @@
+<div class="page-container">
+  <app-page-header
+    title="Transaction"
+    subtitle="All transactions for account ACC001"
+    icon="fa-credit-card"
+    [showBackButton]="true">
+  </app-page-header>
+
+  <div class="content-wrapper">
+    <app-data-table
+      sectionTitle="Transaction List"
+      sectionSubtitle="View all transactions associated with your account"
+      [columns]="columns"
+      [data]="transactions">
+    </app-data-table>
+
+  </div>
+</div>

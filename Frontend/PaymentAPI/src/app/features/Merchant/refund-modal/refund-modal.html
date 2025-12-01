@@ -1,0 +1,73 @@
+<app-modal 
+  [isOpen]="isOpen" 
+  title="Process Refund"
+  subtitle="Refund a previous payment transaction."
+  (closeModal)="onClose()">
+  
+  <form (ngSubmit)="onSubmit()" class="refund-form">
+    <div class="form-group">
+      <label for="referenceNo" class="form-label">
+        Original Payment Reference <span class="required">*</span>
+      </label>
+      <input 
+        type="text" 
+        id="referenceNo"
+        name="referenceNo"
+        [(ngModel)]="referenceNo"
+        class="form-input"
+        placeholder="Enter original payment reference number"
+        required
+        [disabled]="isSubmitting">
+      <p class="form-hint">Enter the reference number of the original payment to refund.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="amount" class="form-label">
+        Refund Amount <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <span class="input-icon">$</span>
+        <input 
+          type="number" 
+          id="amount"
+          name="amount"
+          [(ngModel)]="amount"
+          class="form-input"
+          placeholder="0.00"
+          step="0.01"
+          min="0.01"
+          required
+          [disabled]="isSubmitting">
+      </div>
+      <p class="form-hint">Refund amount cannot exceed the original payment amount.</p>
+    </div>
+
+    <div class="info-box">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        <p class="info-title">Account Information</p>
+        <p class="info-text">Account: <strong>{{ accountId }}</strong></p>
+        <p class="info-text" *ngIf="accountHolderName">Holder: <strong>{{ accountHolderName }}</strong></p>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onClose()"
+        [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-danger"
+        [disabled]="!isValid() || isSubmitting">
+        <span *ngIf="!isSubmitting">Process Refund</span>
+        <span *ngIf="isSubmitting">
+          <i class="fa-solid fa-spinner fa-spin"></i> Processing...
+        </span>
+      </button>
+    </div>
+  </form>
+</app-modal>

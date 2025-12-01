@@ -1,0 +1,29 @@
+<div class="page-header"  [class.sidebar-collapsed]="isCollapsed">
+  <div class="header-left">
+    <button *ngIf="showBackButton" 
+            class="back-btn" 
+            (click)="onBackClick()"
+            title="Go back">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="header-icon" *ngIf="icon">
+      <i class="fa-solid" [ngClass]="icon"></i>
+    </div>
+
+    <div class="header-content">
+      <h1 class="header-title">{{ title }}</h1>
+      <p class="header-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+  </div>
+
+  <div class="header-actions" *ngIf="buttons.length > 0">
+    <button *ngFor="let button of buttons"
+            class="header-btn"
+            [ngClass]="button.cssClass"
+            (click)="onButtonClick(button, $event)">
+      <i *ngIf="button.icon" class="fa-solid" [ngClass]="button.icon"></i>
+      <span>{{ button.label }}</span>
+    </button>
+  </div>
+</div>

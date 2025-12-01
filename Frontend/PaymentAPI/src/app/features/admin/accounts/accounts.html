@@ -1,0 +1,19 @@
+<div class="page-container">
+  <app-page-header
+    title="Accounts"
+    subtitle="Manage accounts"
+    icon="fa-wallet"
+    [showBackButton]="true">
+  </app-page-header>
+
+  <div class="content-wrapper">
+    <app-data-table
+      sectionTitle="All Accounts"
+      sectionSubtitle="View accounts"
+      [columns]="columns"
+      [data]="accounts"
+      [actions]="actions"
+      [emptyMessage]="'No accounts found'">
+    </app-data-table>
+  </div>
+</div>

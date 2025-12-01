@@ -1,0 +1,27 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <h3 class="sidebar-title" *ngIf="!isCollapsed">{{ portalTitle }}</h3>
+    <button class="collapse-btn" (click)="onToggle()" [title]="isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'">
+      <span class="collapse-icon">{{ isCollapsed ? '▶' : '◀' }}</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a 
+      *ngFor="let item of menuItems" 
+      [routerLink]="item.route" 
+      routerLinkActive="active"
+      class="nav-item"
+      [title]="item.label">
+      <i class="fa-solid {{ item.icon }} icon"></i>
+      <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="logout-section">
+    <button class="logout-btn" (click)="onLogout()">
+      <i class="fa-solid fa-right-from-bracket icon"></i>
+      <span class="nav-label" *ngIf="!isCollapsed">Logout</span>
+    </button>
+  </div>
+</aside>

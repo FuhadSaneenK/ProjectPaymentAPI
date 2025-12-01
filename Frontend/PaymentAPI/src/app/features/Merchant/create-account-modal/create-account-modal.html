@@ -1,0 +1,73 @@
+<app-modal 
+  [isOpen]="isOpen" 
+  title="Create Account"
+  subtitle="Create a new payment account."
+  (closeModal)="onClose()">
+  
+  <form (ngSubmit)="onSubmit()" class="create-account-form">
+    <div class="form-group">
+      <label for="holderName" class="form-label">
+        Account Holder Name <span class="required">*</span>
+      </label>
+      <input 
+        type="text" 
+        id="holderName"
+        name="holderName"
+        [(ngModel)]="holderName"
+        class="form-input"
+        placeholder="Enter account holder name"
+        required
+        [disabled]="isSubmitting">
+      <p class="form-hint">Full name of the account holder.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="balance" class="form-label">
+        Initial Balance <span class="required">*</span>
+      </label>
+      <div class="input-wrapper">
+        <span class="input-icon">$</span>
+        <input 
+          type="number" 
+          id="balance"
+          name="balance"
+          [(ngModel)]="balance"
+          class="form-input"
+          placeholder="0.00"
+          step="0.01"
+          min="0"
+          required
+          [disabled]="isSubmitting">
+      </div>
+      <p class="form-hint">Starting balance for the account (can be 0).</p>
+    </div>
+
+    <div class="info-box">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        <p class="info-title">Account Information</p>
+        <p class="info-text">The account will be created under your merchant profile.</p>
+        <p class="info-text">Account ID will be generated automatically.</p>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onClose()"
+        [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="!isValid() || isSubmitting">
+        <span *ngIf="!isSubmitting">Create Account</span>
+        <span *ngIf="isSubmitting">
+          <i class="fa-solid fa-spinner fa-spin"></i> Creating...
+        </span>
+      </button>
+    </div>
+  </form>
+</app-modal>

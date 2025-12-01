@@ -1,0 +1,255 @@
+.table-wrapper {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.section-header {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid #e2e8f0;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.table-container {
+  position: relative;
+  overflow-x: auto;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  gap: 12px;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  thead {
+    background-color: #f8fafc;
+    
+    th {
+      padding: 16px 24px;
+      text-align: left;
+      font-weight: 600;
+      color: #64748b;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f8fafc;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 16px 24px;
+      color: #1e293b;
+      font-size: 14px;
+
+      &.empty-state {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      &.actions-cell {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  i {
+    font-size: 48px;
+    color: #cbd5e1;
+  }
+
+  p {
+    color: #94a3b8;
+    font-size: 15px;
+  }
+}
+
+.actions-cell {
+  display: flex;        // <-- REQUIRED for gap to work
+  gap: 12px;            // adjust spacing as needed
+  flex-wrap: nowrap;    // keep in one row
+  align-items: center;  // vertically center
+}
+
+.action-btn {
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+  white-space: nowrap;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+
+  &.primary {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+
+    &:hover {
+      background-color: #2563eb;
+    }
+  }
+
+  &.secondary {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+
+    &:hover {
+      background-color: #e2e8f0;
+    }
+  }
+
+  &.danger {
+    color: #dc2626;
+    border-color: #fca5a5;
+
+    &:hover {
+      background-color: #fee2e2;
+      border-color: #f87171;
+    }
+  }
+
+  &.success {
+    color: #059669;
+    border-color: #6ee7b7;
+
+    &:hover {
+      background-color: #d1fae5;
+      border-color: #34d399;
+    }
+  }
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+
+  &.completed {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  &.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  &.failed {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+
+  &.processing {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+}
+
+.actions-column {
+  width: 1%;
+  white-space: nowrap;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .data-table {
+    thead th,
+    tbody td {
+      padding: 12px 16px;
+    }
+  }
+
+  .action-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}

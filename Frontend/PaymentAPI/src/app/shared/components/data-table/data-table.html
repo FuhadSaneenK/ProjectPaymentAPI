@@ -1,0 +1,59 @@
+<div class="table-wrapper">
+  <div class="section-header" *ngIf="sectionTitle">
+    <h2>{{ sectionTitle }}</h2>
+    <p *ngIf="sectionSubtitle">{{ sectionSubtitle }}</p>
+  </div>
+
+  <div class="table-container">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <table class="data-table" [class.loading]="loading">
+      <thead>
+        <tr>
+          <th *ngFor="let column of columns" [ngClass]="column.cssClass">
+            {{ column.label }}
+          </th>
+          <th *ngIf="actions.length > 0" class="actions-column">Actions</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr *ngIf="data.length === 0 && !loading">
+          <td [attr.colspan]="columns.length + (actions.length > 0 ? 1 : 0)" class="empty-state">
+            <div class="empty-content">
+              <i class="fa-solid fa-inbox"></i>
+              <p>{{ emptyMessage }}</p>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngFor="let row of data" (click)="onRowClick(row)">
+          <td *ngFor="let column of columns" [ngClass]="column.cssClass">
+            <span *ngIf="column.type !== 'badge'">
+              {{ getCellValue(row, column) }}
+            </span>
+            <span *ngIf="column.type === 'badge'" 
+                  class="badge" 
+                  [ngClass]="getBadgeClass(row, column)">
+              {{ getCellValue(row, column) }}
+            </span>
+          </td>
+          
+          <td *ngIf="actions.length > 0" class="actions-cell">
+            <button *ngFor="let action of actions"
+                    [hidden]="!isActionVisible(action, row)"
+                    class="action-btn"
+                    [ngClass]="action.cssClass"
+                    (click)="onActionClick(action, row, $event)">
+              <i *ngIf="action.icon" class="fa-solid" [ngClass]="action.icon"></i>
+              <span>{{ action.label }}</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
