@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { DashboardComponent } from './features/Merchant/myaccount/myaccount';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard';
+import { LoginComponent } from './features/login/login.component';
+import { SignupComponent } from './features/signup/signup.component';
+import { authGuard, adminGuard, merchantGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -10,8 +13,20 @@ export const routes: Routes = [
   // ---------------------------------------------------------
   {
     path: '',
-    redirectTo: 'admin',
+    redirectTo: 'login',
     pathMatch: 'full'
+  },
+
+  // ---------------------------------------------------------
+  // AUTHENTICATION ROUTES
+  // ---------------------------------------------------------
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'signup',
+    component: SignupComponent
   },
 
   // ---------------------------------------------------------
@@ -20,6 +35,7 @@ export const routes: Routes = [
   {
     path: 'merchant',
     component: MainLayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -45,6 +61,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: MainLayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -86,7 +103,7 @@ export const routes: Routes = [
   // WILDCARD (handles unknown routes)
   // ---------------------------------------------------------
   {
-    path: '**',
-    redirectTo: 'merchant'
+  path: '**',
+  redirectTo: 'login'
   }
 ];
