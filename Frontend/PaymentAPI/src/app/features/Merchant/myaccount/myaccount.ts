@@ -1,31 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { PageHeaderComponent, HeaderButton } from '../../../shared/components/page-header/page-header';
 import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table';
 import { PaymentModalComponent, PaymentData, PaymentMethod } from '../payment-modal/payment-modal';
 import { RefundModalComponent, RefundData } from '../refund-modal/refund-modal';
 import { CreateAccountModalComponent, CreateAccountData } from '../create-account-modal/create-account-modal';
-import { Router } from '@angular/router';
-
+import { AccountsService } from '../../../core/services/accounts/accounts';
+import { AuthService } from '../../../core/services/auth.service';
+import { PayRefundService } from '../../../core/services/pay-refund/pay-refund';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, DataTableComponent, PaymentModalComponent, RefundModalComponent, CreateAccountModalComponent],
+  imports: [
+    CommonModule,
+    PageHeaderComponent,
+    DataTableComponent,
+    PaymentModalComponent,
+    RefundModalComponent,
+    CreateAccountModalComponent
+  ],
   templateUrl: './myaccount.html',
   styleUrls: ['./myaccount.scss']
 })
-export class DashboardComponent {
-  // Modal states
+export class DashboardComponent implements OnInit {
+
+  // For modals
   isPaymentModalOpen = false;
   isRefundModalOpen = false;
   isCreateAccountModalOpen = false;
   selectedAccount: any = null;
-  
-  // TODO: Get merchantId from authentication service
-  merchantId: string = 'MERCH001';
 
-  // Payment methods - TODO: Fetch from API
+  // Merchant ID from JWT
+  merchantId!: number;
+
+  // Accounts list
+  accounts: any[] = [];
+  loading = false;
+
+  // Dummy payment methods (API later)
   paymentMethods: PaymentMethod[] = [
     { id: '1', name: 'Credit Card', description: 'Visa/Mastercard' },
     { id: '2', name: 'Debit Card', description: 'Bank debit card' },
@@ -34,7 +48,44 @@ export class DashboardComponent {
     { id: '5', name: 'Cash', description: 'Cash payment' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private accountsService: AccountsService,
+    private authService: AuthService,
+      private payRefundService: PayRefundService
+  ) {}
+
+  ngOnInit(): void {
+    // ✔ Load merchantId from JWT token
+    this.merchantId = this.authService.getMerchantId();
+    console.log("Merchant ID:", this.merchantId);
+
+    // ✔ Load accounts belonging ONLY to this merchant
+    this.loadAccounts();
+  }
+
+  // ---------------------------------------------------
+  // LOAD ACCOUNTS
+  // ---------------------------------------------------
+  loadAccounts() {
+    this.loading = true;
+
+    this.accountsService.getAccountsByMerchant(this.merchantId).subscribe({
+      next: (response: any) => {
+        this.accounts = response.data.items || [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load accounts:', err);
+        alert('Failed to load accounts');
+        this.loading = false;
+      }
+    });
+  }
+
+  // ---------------------------------------------------
+  // TABLE HEADERS
+  // ---------------------------------------------------
   headerButtons: HeaderButton[] = [
     {
       label: 'Create Account',
@@ -45,20 +96,9 @@ export class DashboardComponent {
   ];
 
   columns: TableColumn[] = [
-    {
-      key: 'accountId',
-      label: 'Account ID'
-    },
-    {
-      key: 'holderName',
-      label: 'Holder Name'
-    },
-    {
-      key: 'balance',
-      label: 'Balance',
-      type: 'currency',
-      cssClass: 'balance'
-    }
+    { key: 'id', label: 'Account ID' },          // ✔ backend correct key
+    { key: 'holderName', label: 'Holder Name' },
+    { key: 'balance', label: 'Balance', type: 'currency', cssClass: 'balance' }
   ];
 
   actions: TableAction[] = [
@@ -79,31 +119,37 @@ export class DashboardComponent {
     }
   ];
 
-  accounts = [
-    { accountId: 'ACC001', holderName: 'John Doe', balance: 15420.50 },
-    { accountId: 'ACC002', holderName: 'Jane Smith', balance: 8750.25 },
-    { accountId: 'ACC003', holderName: 'Bob Johnson', balance: 22100.00 }
-  ];
-
+  // ---------------------------------------------------
+  // UI ACTIONS
+  // ---------------------------------------------------
   createAccount() {
     this.isCreateAccountModalOpen = true;
   }
 
   viewTransactions(account: any) {
-    console.log('View transactions for', account);
-    // Navigate to transaction history page
-    this.router.navigate(['/merchant/transactions', account.accountId]);
+    this.router.navigate(['/merchant/transactions', account.id]);
   }
 
   makePayment(account: any) {
-    this.selectedAccount = account;
+    this.selectedAccount = {
+      ...account,
+      accountId: Number(account.id || account.accountId)  // convert to number
+    };
     this.isPaymentModalOpen = true;
   }
 
+  // processRefund(account: any) {
+  //   this.selectedAccount = account;
+  //   this.isRefundModalOpen = true;
+  // }
   processRefund(account: any) {
-    this.selectedAccount = account;
-    this.isRefundModalOpen = true;
-  }
+  this.selectedAccount = {
+    ...account,
+    accountId: Number(account.id)   // ✔ ensure backend receives number
+  };
+  this.isRefundModalOpen = true;
+}
+
 
   closePaymentModal() {
     this.isPaymentModalOpen = false;
@@ -119,40 +165,90 @@ export class DashboardComponent {
     this.isCreateAccountModalOpen = false;
   }
 
+  // ---------------------------------------------------
+  // SUBMIT HANDLERS (API connection later)
+  // ---------------------------------------------------
+  // onCreateAccountSubmit(accountData: CreateAccountData) {
+  //   console.log('Create account submitted:', accountData);
+
+  //   // TODO: Connect to API POST /api/accounts
+  //   alert(`Account created successfully for ${accountData.holderName}!`);
+  //   this.closeCreateAccountModal();
+  // }
   onCreateAccountSubmit(accountData: CreateAccountData) {
-    console.log('Create account submitted:', accountData);
-    // TODO: Call API to create account
-    // For now, just add to the local array and close modal
-    const newAccount = {
-      accountId: `ACC${String(this.accounts.length + 1).padStart(3, '0')}`,
-      holderName: accountData.holderName,
-      balance: accountData.balance
-    };
-    
-    this.accounts.push(newAccount);
-    alert(`Account created successfully for ${accountData.holderName}!`);
-    this.closeCreateAccountModal();
-    
-    // TODO: Refresh account data after successful creation
-  }
+  console.log('Creating account:', accountData);
 
+  this.accountsService.createAccount(accountData).subscribe({
+    next: (response: any) => {
+      alert('Account created successfully!');
+
+      // Reload updated accounts
+      this.loadAccounts();
+
+      // Close modal
+      this.closeCreateAccountModal();
+    },
+    error: (err) => {
+      console.error("Account creation failed", err);
+      alert("Failed to create account");
+    }
+  });
+}
+
+
+  // onPaymentSubmit(paymentData: PaymentData) {
+  //   console.log('Payment submitted:', paymentData);
+
+  //   // TODO: Connect to API POST /api/transactions/payment
+  //   alert(`Payment of $${paymentData.amount} processed successfully!`);
+  //   this.closePaymentModal();
+  // }
   onPaymentSubmit(paymentData: PaymentData) {
-    console.log('Payment submitted:', paymentData);
-    // TODO: Call API to process payment
-    // For now, just close the modal
-    alert(`Payment of $${paymentData.amount} processed successfully!`);
-    this.closePaymentModal();
-    
-    // TODO: Refresh account data after successful payment
-  }
+  console.log("Submitting payment:", paymentData);
 
+  this.payRefundService.makePayment(paymentData).subscribe({
+    next: (response: any) => {
+      alert("Payment successful!");
+      this.loadAccounts();
+      this.closePaymentModal();
+    },
+    error: (err) => {
+      console.error("Payment failed:", err);
+      alert("Payment failed");
+    }
+  });
+}
+
+
+  // onRefundSubmit(refundData: RefundData) {
+  //   console.log('Refund submitted:', refundData);
+
+  //   // TODO: Connect to API POST /api/transactions/refund
+  //   alert(`Refund of $${refundData.amount} processed successfully!`);
+  //   this.closeRefundModal();
+  // }
   onRefundSubmit(refundData: RefundData) {
-    console.log('Refund submitted:', refundData);
-    // TODO: Call API to process refund
-    // For now, just close the modal
-    alert(`Refund of $${refundData.amount} processed successfully!`);
-    this.closeRefundModal();
-    
-    // TODO: Refresh account data after successful refund
-  }
+  console.log("Submitting refund:", refundData);
+
+  this.payRefundService.makeRefund(refundData).subscribe({
+    next: (response: any) => {
+      alert(response.message || "Refund request submitted!");
+      
+      // Reload accounts (balance changes only AFTER admin approves)
+      this.loadAccounts();
+
+      this.closeRefundModal();
+    },
+    error: (err) => {
+      console.error("Refund failed:", err);
+
+      const message =
+        err?.error?.message ??
+        "Refund request failed";
+
+      alert(message);
+    }
+  });
+}
+
 }

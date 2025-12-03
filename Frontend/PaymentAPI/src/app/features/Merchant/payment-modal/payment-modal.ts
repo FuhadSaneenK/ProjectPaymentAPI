@@ -9,12 +9,19 @@ export interface PaymentMethod {
   description?: string;
 }
 
+// export interface PaymentData {
+//   accountId: string;
+//   amount: number;
+//   paymentMethodId: string;
+//   referenceNo: string;
+// }
 export interface PaymentData {
-  accountId: string;
+  accountId: number;
   amount: number;
-  paymentMethodId: string;
+  paymentMethodId: number;
   referenceNo: string;
 }
+
 
 @Component({
   selector: 'app-payment-modal',
@@ -25,7 +32,9 @@ export interface PaymentData {
 })
 export class PaymentModalComponent {
   @Input() isOpen: boolean = false;
-  @Input() accountId: string = '';
+  // @Input() accountId: string = '';
+  @Input() accountId: number = 0;
+
   @Input() accountHolderName: string = '';
   @Input() paymentMethods: PaymentMethod[] = [];
   
@@ -48,7 +57,7 @@ export class PaymentModalComponent {
       const paymentData: PaymentData = {
         accountId: this.accountId,
         amount: this.amount,
-        paymentMethodId: this.paymentMethodId,
+        paymentMethodId: Number(this.paymentMethodId),
         referenceNo: this.generateReferenceNumber()
       };
 

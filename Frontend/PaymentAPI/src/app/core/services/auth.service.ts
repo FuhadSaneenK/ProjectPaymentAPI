@@ -160,6 +160,15 @@ export class AuthService {
     return user ? user.token || null : null;
   }
 
+  getMerchantId(): number {
+  const token = this.getToken();
+  if (!token) return 0;
+
+  const decoded = this.decodeToken(token);
+  return Number(decoded.merchantId || decoded.MerchantId || 0);
+}
+
+
   isAuthenticated(): boolean {
     return !!this.getToken();
   }

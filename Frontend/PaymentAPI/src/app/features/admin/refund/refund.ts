@@ -1,47 +1,60 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table';
 
+import { AuthService } from '../../../core/services/auth.service';
+import { RefundStatusService } from '../../../core/services/refund/refund-status.service.ts';
+
 @Component({
   selector: 'app-refund',
+  standalone: true,
   imports: [PageHeaderComponent, DataTableComponent],
   templateUrl: './refund.html',
   styleUrl: './refund.scss',
 })
-export class Refund {
-  pendingRefunds = [
-    {
-      referenceNumber: 'REF001',
-      originalRef: 'TXN123456',
-      amount: 450.00,
-      account: 'ACC001'
-    },
-    {
-      referenceNumber: 'REF002',
-      originalRef: 'TXN789012',
-      amount: 1200.50,
-      account: 'ACC002'
-    }
-  ];
+export class Refund implements OnInit {
 
+  pendingRefunds: any[] = [];
+  loading = false;
+
+  constructor(
+    private refundStatusService: RefundStatusService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadPendingRefunds();
+  }
+
+  // ---------------------------------------
+  // LOAD ALL PENDING REFUNDS FROM API
+  // ---------------------------------------
+  loadPendingRefunds() {
+    this.loading = true;
+
+    this.refundStatusService.getPendingRefunds().subscribe({
+      next: (response: any) => {
+        this.pendingRefunds = response.data || [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Failed to load pending refunds:", err);
+        alert("Failed to load pending refunds");
+        this.loading = false;
+      }
+    });
+  }
+
+  // ---------------------------------------
+  // TABLE COLUMNS
+  // ---------------------------------------
   columns: TableColumn[] = [
-    {
-      key: 'referenceNumber',
-      label: 'Reference Number'
-    },
-    {
-      key: 'originalRef',
-      label: 'Original Ref'
-    },
-    {
-      key: 'amount',
-      label: 'Amount',
-      type: 'currency'
-    },
-    {
-      key: 'account',
-      label: 'Account'
-    }
+    { key: 'id', label: 'Refund ID' },
+    { key: 'originalPaymentReference', label: 'Original Ref' },
+    { key: 'amount', label: 'Amount', type: 'currency' },
+    { key: 'accountId', label: 'Account ID' },
+    { key: 'reason', label: 'Reason' },
+    { key: 'requestDate', label: 'Requested On' }
   ];
 
   actions: TableAction[] = [
@@ -59,17 +72,56 @@ export class Refund {
     }
   ];
 
+  // ---------------------------------------
+  // APPROVE REFUND
+  // ---------------------------------------
   approveRefund(refund: any) {
-    console.log('Approving refund:', refund);
-    // TODO: Call API to approve refund
-    alert(`Refund ${refund.referenceNumber} approved successfully!`);
+    const adminUserId = this.authService.getCurrentUser()?.id;
+
+    if (!adminUserId) {
+      alert("Invalid admin session");
+      return;
+    }
+
+    this.refundStatusService.approveRefund(refund.id, adminUserId, "Approved by admin").subscribe({
+      next: () => {
+        alert(`Refund ${refund.id} approved successfully!`);
+        this.loadPendingRefunds();
+      },
+      error: (err) => {
+        console.error("Approval failed:", err);
+        alert("Failed to approve refund");
+      }
+    });
   }
 
+  // ---------------------------------------
+  // REJECT REFUND
+  // ---------------------------------------
   rejectRefund(refund: any) {
-    console.log('Rejecting refund:', refund);
-    // TODO: Call API to reject refund
-    if (confirm(`Are you sure you want to reject refund ${refund.referenceNumber}?`)) {
-      alert(`Refund ${refund.referenceNumber} rejected.`);
+    const adminUserId = this.authService.getCurrentUser()?.id;
+
+    if (!adminUserId) {
+      alert("Invalid admin session");
+      return;
     }
+
+    const reason = prompt("Enter rejection reason:");
+
+    if (!reason || reason.trim() === '') {
+      alert("Rejection reason required");
+      return;
+    }
+
+    this.refundStatusService.rejectRefund(refund.id, adminUserId, reason).subscribe({
+      next: () => {
+        alert(`Refund ${refund.id} rejected.`);
+        this.loadPendingRefunds();
+      },
+      error: (err) => {
+        console.error("Rejection failed:", err);
+        alert("Failed to reject refund");
+      }
+    });
   }
 }

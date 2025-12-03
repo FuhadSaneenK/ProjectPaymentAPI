@@ -6,7 +6,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal';
 export interface CreateAccountData {
   holderName: string;
   balance: number;
-  merchantId: string;
+  merchantId: number;
 }
 
 @Component({
@@ -18,7 +18,7 @@ export interface CreateAccountData {
 })
 export class CreateAccountModalComponent {
   @Input() isOpen: boolean = false;
-  @Input() merchantId: string = '';
+  @Input() merchantId: number = 0;
   
   @Output() closeModal = new EventEmitter<void>();
   @Output() submitAccount = new EventEmitter<CreateAccountData>();

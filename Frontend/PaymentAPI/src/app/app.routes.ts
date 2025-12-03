@@ -73,7 +73,7 @@ export const routes: Routes = [
         component: AdminDashboardComponent
       },
       {
-        path: 'accounts/:MerchantId',
+        path: 'accounts/:merchantId',
         loadComponent: () =>
           import('./features/admin/accounts/accounts')
             .then(m => m.Accounts)

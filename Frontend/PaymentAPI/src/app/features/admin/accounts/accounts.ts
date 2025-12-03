@@ -1,53 +1,73 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { DataTableComponent, TableAction, TableColumn } from '../../../shared/components/data-table/data-table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AccountsService } from '../../../core/services/accounts/accounts';
 
 @Component({
   selector: 'app-accounts',
-  imports: [PageHeaderComponent,DataTableComponent],
+  standalone: true,
+  imports: [PageHeaderComponent, DataTableComponent],
   templateUrl: './accounts.html',
-  styleUrl: './accounts.scss',
+  styleUrls: ['./accounts.scss'],
 })
-export class Accounts {
+export class Accounts implements OnInit {
 
-  constructor(private router: Router) {}
-    columns: TableColumn[] = [
-      {
-        key: 'accountId',
-        label: 'Account ID'
-      },
-      {
-        key: 'holderName',
-        label: 'Holder Name'
-      },
-      {
-        key: 'balance',
-        label: 'Balance',
-        type: 'currency',
-        cssClass: 'balance'
-      }
-    ];
+  merchantId!: number;
+  accounts: any[] = [];
 
-      actions: TableAction[] = [
-        {
-          label: 'Transactions',
-          icon: 'fa-receipt',
-          onClick: (row) => this.viewTransactions(row)
-        }
-      ];
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private accountsService: AccountsService
+  ) {}
 
-    accounts = [
-        { accountId: 'ACC001', holderName: 'John Doe', balance: 15420.50 },
-        { accountId: 'ACC002', holderName: 'Jane Smith', balance: 8750.25 },
-        { accountId: 'ACC003', holderName: 'Bob Johnson', balance: 22100.00 }
-    ];
+  ngOnInit(): void {
+    // Read the merchantId from route
+    this.merchantId = Number(this.route.snapshot.paramMap.get('merchantId'));
+    console.log("Merchant ID:", this.merchantId); // should show correct value
+    // Load accounts for this merchant
+    this.loadAccounts();
+  }
+
+  // -----------------------------
+  // TABLE CONFIG
+  // -----------------------------
+  columns: TableColumn[] = [
+    { key: 'id', label: 'Account ID' },
+    { key: 'holderName', label: 'Holder Name' },
+    { key: 'balance', label: 'Balance', type: 'currency', cssClass: 'balance' }
+  ];
+
+  actions: TableAction[] = [
+    {
+      label: 'Transactions',
+      icon: 'fa-receipt',
+      onClick: (row) => this.viewTransactions(row)
+    }
+  ];
+
+  // -----------------------------
+  // API CALL
+  // -----------------------------
+  loadAccounts() {
+  this.accountsService.getAccountsByMerchant(this.merchantId).subscribe({
+    next: (response: any) => {
+      console.log(response); // check structure
+      this.accounts = response.data.items || [];
+    },
+    error: (err) => {
+      console.error('Error loading accounts:', err);
+      alert('Failed to load accounts');
+    }
+    });
+  }
 
 
-      viewTransactions(account: any) {
-        console.log('View transactions for', account);
-        // Navigate to transaction history page
-        this.router.navigate(['/admin/transactions', account.accountId]);
-      }
-
+  // -----------------------------
+  // NAVIGATION
+  // -----------------------------
+  viewTransactions(account: any) {
+    this.router.navigate(['/admin/transactions', account.id]);
+  }
 }

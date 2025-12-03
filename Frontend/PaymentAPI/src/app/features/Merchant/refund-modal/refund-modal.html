@@ -42,6 +42,22 @@
       <p class="form-hint">Refund amount cannot exceed the original payment amount.</p>
     </div>
 
+    <div class="form-group">
+      <label for="reason" class="form-label">
+        Reason for Refund <span class="required">*</span>
+      </label>
+      <textarea 
+        id="reason"
+        name="reason"
+        [(ngModel)]="reason"
+        class="form-input"
+        placeholder="Enter the reason for this refund"
+        rows="3"
+        required
+        [disabled]="isSubmitting"></textarea>
+      <p class="form-hint">Provide a clear reason for processing this refund.</p>
+    </div>
+
     <div class="info-box">
       <i class="fa-solid fa-circle-info"></i>
       <div>
