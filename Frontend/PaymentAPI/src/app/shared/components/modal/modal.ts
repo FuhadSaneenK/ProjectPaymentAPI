@@ -13,6 +13,8 @@ export class ModalComponent {
   @Input() title: string = '';
   @Input() subtitle: string = '';
   @Input() showCloseButton: boolean = true;
+  @Input() closeOnBackdropClick: boolean = true;
+  @Input() closeOnEscape: boolean = true;
   
   @Output() closeModal = new EventEmitter<void>();
 
@@ -21,14 +23,14 @@ export class ModalComponent {
   }
 
   onOverlayClick(event: MouseEvent) {
-    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+    if (this.closeOnBackdropClick && (event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.onClose();
     }
   }
 
   @HostListener('document:keydown.escape')
   onEscapeKey() {
-    if (this.isOpen) {
+    if (this.isOpen && this.closeOnEscape) {
       this.onClose();
     }
   }

@@ -1,4 +1,4 @@
-<app-modal [isOpen]="isOpen" (close)="onClose()">
+<app-modal [isOpen]="isOpen" [closeOnBackdropClick]="true" [closeOnEscape]="true" (closeModal)="onClose()">
   <div class="modal-header">
     <h2>Add New Merchant</h2>
   </div>
