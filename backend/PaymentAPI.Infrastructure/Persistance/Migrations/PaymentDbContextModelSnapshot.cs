@@ -94,6 +94,68 @@ namespace PaymentAPI.Infrastructure.Migrations
                     b.ToTable("PaymentMethods");
                 });
 
+            modelBuilder.Entity("PaymentAPI.Domain.Entities.RefundRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AdminComments")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("OriginalPaymentReference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int?>("RefundTransactionId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ReviewDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ReviewedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Pending");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("OriginalPaymentReference");
+
+                    b.HasIndex("RefundTransactionId");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("RefundRequests", (string)null);
+                });
+
             modelBuilder.Entity("PaymentAPI.Domain.Entities.Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -149,6 +211,9 @@ namespace PaymentAPI.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("MerchantId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -165,6 +230,8 @@ namespace PaymentAPI.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MerchantId");
+
                     b.ToTable("Users");
                 });
 
@@ -177,6 +244,31 @@ namespace PaymentAPI.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Merchant");
+                });
+
+            modelBuilder.Entity("PaymentAPI.Domain.Entities.RefundRequest", b =>
+                {
+                    b.HasOne("PaymentAPI.Domain.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PaymentAPI.Domain.Entities.Transaction", "RefundTransaction")
+                        .WithMany()
+                        .HasForeignKey("RefundTransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PaymentAPI.Domain.Entities.User", "ReviewedByUser")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Account");
+
+                    b.Navigation("RefundTransaction");
+
+                    b.Navigation("ReviewedByUser");
                 });
 
             modelBuilder.Entity("PaymentAPI.Domain.Entities.Transaction", b =>
@@ -198,6 +290,16 @@ namespace PaymentAPI.Infrastructure.Migrations
                     b.Navigation("PaymentMethod");
                 });
 
+            modelBuilder.Entity("PaymentAPI.Domain.Entities.User", b =>
+                {
+                    b.HasOne("PaymentAPI.Domain.Entities.Merchant", "Merchant")
+                        .WithMany("Users")
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Merchant");
+                });
+
             modelBuilder.Entity("PaymentAPI.Domain.Entities.Account", b =>
                 {
                     b.Navigation("Transactions");
@@ -206,6 +308,8 @@ namespace PaymentAPI.Infrastructure.Migrations
             modelBuilder.Entity("PaymentAPI.Domain.Entities.Merchant", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("PaymentAPI.Domain.Entities.PaymentMethod", b =>
