@@ -1,0 +1,60 @@
+<app-modal [isOpen]="isOpen" [closeOnBackdropClick]="true" [closeOnEscape]="true" (closeModal)="onClose()">
+  <div class="modal-header">
+    <h2>Add New Merchant</h2>
+  </div>
+
+  <div class="modal-body">
+    <form (ngSubmit)="onSubmit()" #merchantForm="ngForm">
+      <div class="form-group">
+        <label for="merchantName">
+          <i class="fa fa-user"></i> Merchant Name
+        </label>
+        <input
+          type="text"
+          id="merchantName"
+          name="name"
+          [(ngModel)]="merchantData.name"
+          placeholder="Enter merchant name"
+          required
+          #nameInput="ngModel"
+        />
+        <div class="error-message" *ngIf="nameInput.invalid && nameInput.touched">
+          Merchant name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="merchantEmail">
+          <i class="fa fa-envelope"></i> Email
+        </label>
+        <input
+          type="email"
+          id="merchantEmail"
+          name="email"
+          [(ngModel)]="merchantData.email"
+          placeholder="Enter merchant email"
+          required
+          email
+          #emailInput="ngModel"
+        />
+        <div class="error-message" *ngIf="emailInput.invalid && emailInput.touched">
+          <span *ngIf="emailInput.errors?.['required']">Email is required</span>
+          <span *ngIf="emailInput.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="merchantForm.invalid"
+        >
+          <i class="fa fa-plus"></i> Create Merchant
+        </button>
+      </div>
+    </form>
+  </div>
+</app-modal>

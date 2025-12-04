@@ -1,0 +1,49 @@
+<div class="summary-container">
+  <app-page-header
+    [title]="summary.merchantName"
+    [subtitle]="'Merchant Summary'"
+    icon="fa-chart-bar"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <div class="summary-content" *ngIf="!isLoading">
+    <div class="info-card">
+      <div class="info-row">
+        <span class="label">Merchant ID:</span>
+        <span class="value">{{ summary.merchantId }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Email:</span>
+        <span class="value">{{ summary.email }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Total Balance:</span>
+        <span class="value">${{ summary.totalBalance | number:'1.2-2' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Account Holders:</span>
+        <span class="value">{{ summary.totalHolders }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Total Transactions:</span>
+        <span class="value">{{ summary.totalTransactions }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Payments:</span>
+        <span class="value">{{ summary.totalPayments }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Refunds:</span>
+        <span class="value">{{ summary.totalRefunds }}</span>
+      </div>
+    </div>
+
+    <!-- <button class="btn-back" (click)="goBack()">
+      <i class="fa fa-arrow-left"></i> Back to Merchants
+    </button> -->
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    Loading...
+  </div>
+</div>

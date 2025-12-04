@@ -1,0 +1,24 @@
+<div class="page-container">
+  <app-page-header
+    title="Merchants"
+    subtitle="Manage your merchants"
+    icon="fa-wallet"
+    [buttons]="headerButtons">
+  </app-page-header>
+
+  <app-data-table
+    sectionTitle="All Merchants"
+    sectionSubtitle="View and manage your merchants"
+    [columns]="columns"
+    [data]="merchants"
+    [actions]="actions"
+    [emptyMessage]="'No merchants found'">
+  </app-data-table>
+
+  <app-create-merchant-modal
+    [isOpen]="isCreateMerchantModalOpen"
+    (close)="closeCreateMerchantModal()"
+    (submitMerchant)="onMerchantSubmit($event)">
+  </app-create-merchant-modal>
+
+</div>

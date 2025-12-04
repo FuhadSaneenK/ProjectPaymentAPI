@@ -1,0 +1,46 @@
+<div class="page-container">
+  <app-page-header
+    title="My Accounts"
+    subtitle="Manage your payment accounts"
+    icon="fa-wallet"
+    [buttons]="headerButtons">
+  </app-page-header>
+
+  <div class="content-wrapper">
+    <app-data-table
+      sectionTitle="All Accounts"
+      sectionSubtitle="View and manage your accounts"
+      [columns]="columns"
+      [data]="accounts"
+      [actions]="actions"
+      [emptyMessage]="'No accounts found'">
+    </app-data-table>
+  </div>
+
+  <!-- Payment Modal -->
+  <app-payment-modal
+    [isOpen]="isPaymentModalOpen"
+    [accountId]="selectedAccount?.accountId"
+    [accountHolderName]="selectedAccount?.holderName"
+    [paymentMethods]="paymentMethods"
+    (closeModal)="closePaymentModal()"
+    (submitPayment)="onPaymentSubmit($event)">
+  </app-payment-modal>
+
+  <!-- Refund Modal -->
+  <app-refund-modal
+    [isOpen]="isRefundModalOpen"
+    [accountId]="selectedAccount?.accountId"
+    [accountHolderName]="selectedAccount?.holderName"
+    (closeModal)="closeRefundModal()"
+    (submitRefund)="onRefundSubmit($event)">
+  </app-refund-modal>
+
+  <!-- Create Account Modal -->
+  <app-create-account-modal
+    [isOpen]="isCreateAccountModalOpen"
+    [merchantId]="merchantId"
+    (closeModal)="closeCreateAccountModal()"
+    (submitAccount)="onCreateAccountSubmit($event)">
+  </app-create-account-modal>
+</div>
