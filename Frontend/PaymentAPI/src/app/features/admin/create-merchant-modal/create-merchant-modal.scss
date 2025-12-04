@@ -95,13 +95,13 @@
 }
 
 .btn-primary {
-  background: #4a90e2;
+  background: #5cb85c;
   color: white;
 
   &:hover:not(:disabled) {
-    background: #357abd;
+    background: #4cae4c;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 4px 8px rgba(92, 184, 92, 0.3);
   }
 }
 

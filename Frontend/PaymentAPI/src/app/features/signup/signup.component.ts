@@ -74,14 +74,4 @@ export class SignupComponent {
       });
     }
   }
-
-  signupWithGoogle(): void {
-    console.log('Signup with Google');
-    // TODO: Implement Google OAuth
-  }
-
-  signupWithGithub(): void {
-    console.log('Signup with Github');
-    // TODO: Implement Github OAuth
-  }
 }

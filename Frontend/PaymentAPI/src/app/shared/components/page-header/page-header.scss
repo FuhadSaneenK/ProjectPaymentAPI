@@ -46,7 +46,7 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #5cb85c 0%, #4cae4c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,14 +111,14 @@
   }
 
   &.primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #5cb85c 0%, #4cae4c 100%);
     color: white;
     border-color: transparent;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 2px 4px rgba(92, 184, 92, 0.2);
 
     &:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, #4cae4c 0%, #3d9c3d 100%);
+      box-shadow: 0 4px 8px rgba(92, 184, 92, 0.3);
     }
   }
 

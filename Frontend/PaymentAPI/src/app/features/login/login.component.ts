@@ -66,16 +66,6 @@ export class LoginComponent {
     }
   }
 
-  loginWithGoogle(): void {
-    console.log('Login with Google');
-    // TODO: Implement Google OAuth
-  }
-
-  loginWithGithub(): void {
-    console.log('Login with Github');
-    // TODO: Implement Github OAuth
-  }
-
   forgotPassword(): void {
     console.log('Forgot password');
     // TODO: Navigate to forgot password page
